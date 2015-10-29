@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_offwork"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/offWorkLeftLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="150dp" >
+
+        <TextView
+            android:id="@+id/signInTimeTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notSignIn"
+            android:textColor="@drawable/white"
+            android:textSize="16sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/offWorkTimeTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notSignIn"
+            android:textColor="@drawable/white"
+            android:textSize="16sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/offWorkLeftTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
+            android:text="@string/notSignIn"
+            android:textColor="@drawable/white"
+            android:textSize="16sp" >
+
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/signInLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="150dp" >
+
+        <Button
+            android:id="@+id/signIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signIn"
+            android:textColor="@drawable/black"
+            android:textSize="18sp" >
+        </Button>
+    </LinearLayout>
+
+</FrameLayout>
