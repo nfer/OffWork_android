@@ -9,10 +9,14 @@ import com.nferzhuang.offwork.receivers.MyAlarmReceiver;
 import com.nferzhuang.offwork.utils.MyTime;
 import com.nferzhuang.offwork.utils.Utils;
 import com.nferzhuang.offwork.utils.WorkTime;
+import com.nferzhuang.offwork.utils.MyTimePickerDialog;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,6 +32,7 @@ import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class OffWorkActivity extends BaseActivity
 		implements View.OnClickListener {
@@ -39,15 +44,14 @@ public class OffWorkActivity extends BaseActivity
 	private TextView offWorkLeftTips;
 	private SharedPreferences preferences;
 	private String today;
-	private String signInTimeStr;
 	private LinearLayout offWorkLeftLayout;
 	private LinearLayout signInLayout;
 	private WorkTime workTime;
 	private MyTime signInTime;
 	private MyTime offWorkTime;
-	private Timer timer;
-	private TimerTask task;
-	private Handler handler;
+	private Timer timer = null;
+	private TimerTask task = null;
+	private Handler handler = null;
 
 	private PendingIntent alarmPendingIntent = null;
 
@@ -77,6 +81,14 @@ public class OffWorkActivity extends BaseActivity
 	public void onResume() {
 		super.onResume();
 
+		// get workTime from context(Preference)
+		workTime = new WorkTime(getApplicationContext());
+		if (!workTime.valid()) {
+			Log.d(TAG, "WorkTime:" + workTime);
+			showSettingTipsDialog();
+			return;
+		}
+
 		timer = new Timer();
 		handler = new MyHandler(this) {
 			@Override
@@ -96,18 +108,26 @@ public class OffWorkActivity extends BaseActivity
 		};
 
 		today = Utils.getTodayString();
-		signInTimeStr = preferences.getString(today, null);
-		if (signInTimeStr == null) {
+		String timeStr = preferences.getString(today, null);
+		if (timeStr == null) {
 			initSignIn();
 		} else {
-			initOffWorkLeft();
+			initOffWorkLeft(timeStr);
 		}
 	}
 
 	public void onPause() {
 		super.onPause();
 
-		timer.cancel();
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+
+		if (task != null) {
+			task.cancel();
+			task = null;
+		}
 	}
 
 	@Override
@@ -150,20 +170,12 @@ public class OffWorkActivity extends BaseActivity
 		signInLayout.setVisibility(View.VISIBLE);
 	}
 
-	public void initOffWorkLeft() {
+	public void initOffWorkLeft(String timeStr) {
 		offWorkLeftLayout.setVisibility(View.VISIBLE);
 		signInLayout.setVisibility(View.GONE);
 
-		// get workTime from context(Preference)
-		workTime = new WorkTime(getApplicationContext());
-		if (!workTime.valid()) {
-			Log.d(TAG, "WorkTime:" + workTime);
-			startSettings();
-			return;
-		}
-
 		// get signInTime
-		signInTime = new MyTime(signInTimeStr);
+		signInTime = new MyTime(timeStr);
 		Log.d(TAG, "signInTime:" + signInTime);
 
 		// get offWorkTime
@@ -224,19 +236,15 @@ public class OffWorkActivity extends BaseActivity
 		switch (view.getId()) {
 		case R.id.signIn: {
 			MyTime myTime = Utils.getNowTime();
-			signInTimeStr = myTime.toString();
-			Log.d(TAG, "signIn at:" + signInTimeStr);
+			String timeStr = myTime.toString();
+			Log.d(TAG, "signIn at:" + timeStr);
 
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putString(today, signInTimeStr);
-			editor.commit();
-			String configured = preferences.getString(WorkTime.PREF_CONFIGURED,
-					null);
-			if (configured != null) {
-				initOffWorkLeft();
-			} else {
-				startSettings();
+			if (myTime.compare(workTime.getOnWorkEndTime()) > 0) {
+				showLateTipsDialog(timeStr);
+				break;
 			}
+
+			saveSignInTime(timeStr);
 		}
 			break;
 		default:
@@ -283,5 +291,64 @@ public class OffWorkActivity extends BaseActivity
 				.getSystemService(Context.ALARM_SERVICE);
 		alarm.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, alarmPendingIntent);
 		Log.d(TAG, "set alarm at " + triggerAtMillis + " ms later.");
+	}
+
+	private void showSettingTipsDialog() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(
+				OffWorkActivity.this);
+
+		dialog.setTitle(getString(R.string.errtitle));
+		dialog.setMessage(R.string.no_setting);
+
+		dialog.setPositiveButton(getString(R.string.OK),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						startSettings();
+					}
+				});
+		dialog.create().show();
+	}
+
+	private void showLateTipsDialog(final String timeStr) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(
+				OffWorkActivity.this);
+
+		dialog.setTitle(getString(R.string.errtitle));
+		dialog.setMessage(R.string.late);
+
+		dialog.setPositiveButton(getString(R.string.OK),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						MyTime time = new MyTime(timeStr);
+
+						new MyTimePickerDialog(OffWorkActivity.this,
+								new TimePickerDialog.OnTimeSetListener() {
+							public void onTimeSet(TimePicker view, int hour,
+									int minute) {
+								String newTimeStr = String
+										.format("%02d:%02d", hour, minute);
+								saveSignInTime(newTimeStr);
+							}
+						}, time.getHour(), time.getMinute(), true).show();
+					}
+				});
+		dialog.setNegativeButton(getString(R.string.Cancel),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						saveSignInTime(timeStr);
+					}
+				});
+		dialog.create().show();
+	}
+
+	private void saveSignInTime(String timeStr) {
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString(today, timeStr);
+		editor.commit();
+
+		initOffWorkLeft(timeStr);
 	}
 }

@@ -1,7 +1,6 @@
 package com.nferzhuang.offwork;
 
 import com.nferzhuang.offwork.utils.MyTime;
-import com.nferzhuang.offwork.utils.Utils;
 import com.nferzhuang.offwork.utils.WorkTime;
 
 import android.app.AlertDialog;
@@ -11,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
@@ -25,6 +23,7 @@ public class SettingsActivity extends BaseActivity {
 	private Button noonRestEnd;
 	private Button offWorkStart;
 	private Button offWorkEnd;
+	private WorkTime workTime;
 
 	private SharedPreferences settings;
 
@@ -43,34 +42,34 @@ public class SettingsActivity extends BaseActivity {
 		offWorkStart = (Button) findViewById(R.id.offWorkStart);
 		offWorkEnd = (Button) findViewById(R.id.offWorkEnd);
 
-		InitButton(onWorkStart, R.string.onWorkTimeStart, WorkTime.PREF_ONWORKSTART);
+		InitButton(onWorkStart, R.string.onWorkTimeStart,
+				WorkTime.PREF_ONWORKSTART);
 		InitButton(onWorkEnd, R.string.onWorkTimeEnd, WorkTime.PREF_ONWORKEND);
 		InitButton(noonRestStart, R.string.noonRestTimeStart,
 				WorkTime.PREF_NOONRESTSTART);
-		InitButton(noonRestEnd, R.string.noonRestTimeEnd, WorkTime.PREF_NOONRESTEND);
-		InitButton(offWorkStart, R.string.offWorkTimeStart, WorkTime.PREF_OFFWORKSTART);
-		InitButton(offWorkEnd, R.string.offWorkTimeEnd, WorkTime.PREF_OFFWORKEND);
+		InitButton(noonRestEnd, R.string.noonRestTimeEnd,
+				WorkTime.PREF_NOONRESTEND);
+		InitButton(offWorkStart, R.string.offWorkTimeStart,
+				WorkTime.PREF_OFFWORKSTART);
+		InitButton(offWorkEnd, R.string.offWorkTimeEnd,
+				WorkTime.PREF_OFFWORKEND);
 
 		setTitle(getString(R.string.settings));
 		setLeftImgBtn(R.drawable.topbar_back, new OnLButtonClickListener() {
 			@Override
 			public void onLeftBtnClick() {
+				if (workTime == null || !workTime.valid()) {
+					Log.d(TAG, "WorkTime:" + workTime);
+					showSettingNoSaveDialog();
+					return;
+				}
+				workTime.save(getApplicationContext());
 				finish();
 			}
 		}, true);
 		setRightImgBtn(R.drawable.topbar_complete, listener, true);
-	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			Log.d(TAG, "action_home");
-			this.finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+		getWorkTime();
 	}
 
 	public void InitButton(Button btn, int stringId, String prefString) {
@@ -102,16 +101,7 @@ public class SettingsActivity extends BaseActivity {
 	OnRButtonClickListener listener = new OnRButtonClickListener() {
 		@Override
 		public void onRightBtnClick() {
-			String onWorkStartStr = onWorkStart.getText().toString();
-			String onWorkEndStr = onWorkEnd.getText().toString();
-			String noonRestStartStr = noonRestStart.getText().toString();
-			String noonRestEndStr = noonRestEnd.getText().toString();
-			String offWorkStartStr = offWorkStart.getText().toString();
-			String offWorkEndStr = offWorkEnd.getText().toString();
-
-			WorkTime workTime = new WorkTime(onWorkStartStr, onWorkEndStr,
-					noonRestStartStr, noonRestEndStr, offWorkStartStr,
-					offWorkEndStr);
+			getWorkTime();
 
 			if (workTime.error() != WorkTime.WORKTIME_OK) {
 				Log.w(TAG, "nfer workTime:" + workTime);
@@ -120,15 +110,7 @@ public class SettingsActivity extends BaseActivity {
 			}
 
 			Log.d(TAG, "all configs are OK.");
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString(WorkTime.PREF_CONFIGURED, Utils.getTodayString());
-			editor.putString(WorkTime.PREF_ONWORKSTART, onWorkStartStr);
-			editor.putString(WorkTime.PREF_ONWORKEND, onWorkEndStr);
-			editor.putString(WorkTime.PREF_NOONRESTSTART, noonRestStartStr);
-			editor.putString(WorkTime.PREF_NOONRESTEND, noonRestEndStr);
-			editor.putString(WorkTime.PREF_OFFWORKSTART, offWorkStartStr);
-			editor.putString(WorkTime.PREF_OFFWORKEND, offWorkEndStr);
-			editor.commit();
+			workTime.save(getApplicationContext());
 
 			finish();
 		}
@@ -169,6 +151,34 @@ public class SettingsActivity extends BaseActivity {
 
 		dialog.setTitle(getString(R.string.errtitle));
 		dialog.setMessage(errmsg);
+
+		dialog.setPositiveButton(getString(R.string.OK),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+		dialog.create().show();
+	}
+
+	private void getWorkTime() {
+		String onWorkStartStr = onWorkStart.getText().toString();
+		String onWorkEndStr = onWorkEnd.getText().toString();
+		String noonRestStartStr = noonRestStart.getText().toString();
+		String noonRestEndStr = noonRestEnd.getText().toString();
+		String offWorkStartStr = offWorkStart.getText().toString();
+		String offWorkEndStr = offWorkEnd.getText().toString();
+
+		workTime = new WorkTime(onWorkStartStr, onWorkEndStr, noonRestStartStr,
+				noonRestEndStr, offWorkStartStr, offWorkEndStr);
+	}
+
+	private void showSettingNoSaveDialog() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(
+				SettingsActivity.this);
+
+		dialog.setTitle(getString(R.string.errtitle));
+		dialog.setMessage(R.string.setting_no_save);
 
 		dialog.setPositiveButton(getString(R.string.OK),
 				new DialogInterface.OnClickListener() {

@@ -66,6 +66,20 @@ public class WorkTime {
 		offWorkEndTime = new MyTime(offWorkEndStr);
 	}
 
+	public void save(Context context) {
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString(PREF_CONFIGURED, Utils.getTodayString());
+		editor.putString(PREF_ONWORKSTART, onWorkStartTime.toString());
+		editor.putString(PREF_ONWORKEND, onWorkEndTime.toString());
+		editor.putString(PREF_NOONRESTSTART, noonRestStartTime.toString());
+		editor.putString(PREF_NOONRESTEND, noonRestEndTime.toString());
+		editor.putString(PREF_OFFWORKSTART, offWorkStartTime.toString());
+		editor.putString(PREF_OFFWORKEND, offWorkEndTime.toString());
+		editor.commit();
+	}
+
 	public String toString() {
 		return onWorkStartTime.toString() + "," + onWorkEndTime.toString() + ","
 				+ noonRestStartTime.toString() + ","

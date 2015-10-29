@@ -21,6 +21,7 @@
   <string name="about">关于</string>
   <string name="signIn">打卡</string>
   <string name="OK">确定</string>
+  <string name="Cancel">取消</string>
   <string name="errtitle">出错了！</string>
   <string name="onwork_range_error">上班弹性时间段设置错误</string>
   <string name="onwork_time_error">午休时间和上班弹性时间段重叠</string>
@@ -35,4 +36,7 @@
   <string name="version">版本：</string>
   <string name="actionBarLeftBtn">标题栏左侧按钮</string>
   <string name="actionBarRightBtn">标题栏右侧按钮</string>
+  <string name="no_setting">请先设置考勤时间再记录打卡</string>
+  <string name="setting_no_save">请先保存再退出</string>
+  <string name="late">打卡时间已迟到，是否手动输入时间？</string>
 </resources>
