@@ -87,7 +87,7 @@ public class OffWorkActivity extends BaseActivity
 		// get workTime from context(Preference)
 		workTime = new WorkTime(getApplicationContext());
 		if (!workTime.valid()) {
-			Log.d(TAG, "WorkTime:" + workTime);
+			Log.d(TAG, "WorkTime not valid:" + workTime);
 			showSettingTipsDialog();
 			return;
 		}
@@ -165,6 +165,7 @@ public class OffWorkActivity extends BaseActivity
 		// get signInTime
 		signInTime = new MyTime(timeStr);
 		Log.d(TAG, "signInTime:" + signInTime);
+		signInTimeTips.setText(getString(R.string.signInTime) + signInTime);
 
 		// get offWorkTime
 		int time = signInTime.compare(workTime.getOnWorkStartTime());
@@ -174,16 +175,15 @@ public class OffWorkActivity extends BaseActivity
 			offWorkTime = workTime.getOffWorkStartTime().add(time);
 		}
 		Log.d(TAG, "offWorkTime:" + offWorkTime);
-
-		signInTimeTips.setText(getString(R.string.signInTime) + signInTime);
 		offWorkTimeTips.setText(getString(R.string.offWorkTime) + offWorkTime);
 
+		// use timer to update work left time
 		timer.schedule(task, 0, 1000);
 	}
 
 	public void calcWorkLeftTime() {
 		MyTime now = Utils.getNowTime();
-		Log.d(TAG, "now:" + now);
+		Log.d(TAG, "now:" + now + ", offWorkTime:" + offWorkTime);
 		if (now.compare(offWorkTime) >= 0) {
 			offWorkLeftTips.setText(R.string.goHome);
 			timer.cancel();
@@ -199,16 +199,16 @@ public class OffWorkActivity extends BaseActivity
 
 		int workLeftSecond = 0;
 		if (now.compare(noonRestStartTime) < 0) {
-			Log.d(TAG,
+			Log.v(TAG,
 					"now is less than noonRestStartTime:" + noonRestStartTime);
 			int noonRestDuration = workTime.getNoonRestDuration();
-			Log.d(TAG, "noonRestDuration:" + noonRestDuration);
+			Log.v(TAG, "noonRestDuration:" + noonRestDuration);
 			workLeftSecond = offWorkTime.compare(now) - noonRestDuration;
 		} else if (now.compare(noonRestEndTime) < 0) {
-			Log.d(TAG, "now is less than noonRestEndTime:" + noonRestEndTime);
+			Log.v(TAG, "now is less than noonRestEndTime:" + noonRestEndTime);
 			workLeftSecond = offWorkTime.compare(noonRestEndTime);
 		} else {
-			Log.d(TAG, "now is bigger than noonRestEndTime:" + noonRestEndTime);
+			Log.v(TAG, "now is bigger than noonRestEndTime:" + noonRestEndTime);
 			workLeftSecond = offWorkTime.compare(now);
 		}
 
