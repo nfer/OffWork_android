@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public abstract class BaseActivity extends Activity {
-	private static final String TAG = "BaseActivity";
-
 	private TextView mTitleTextView;
 	private ImageButton mRightImageBtn;
 	private ImageButton immLeftImageBtngBack;
@@ -28,8 +27,9 @@ public abstract class BaseActivity extends Activity {
 		getActionBar().setDisplayShowTitleEnabled(false);
 		getActionBar().setDisplayShowCustomEnabled(true);
 
+		LinearLayout layout = (LinearLayout)findViewById(layoutResID);
 		View actionbarLayout = LayoutInflater.from(this)
-				.inflate(R.layout.custom_actionbar, null, false);
+				.inflate(R.layout.custom_actionbar, layout, false);
 		getActionBar().setCustomView(actionbarLayout);
 
 		mTitleTextView = (TextView) (actionbarLayout

@@ -2,6 +2,7 @@ package com.nferzhuang.offwork;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -328,7 +329,7 @@ public class OffWorkActivity extends BaseActivity
 							public void onTimeSet(TimePicker view, int hour,
 									int minute) {
 								String newTimeStr = String
-										.format("%02d:%02d", hour, minute);
+										.format(Locale.SIMPLIFIED_CHINESE ,"%02d:%02d", hour, minute);
 								saveSignInTime(newTimeStr);
 							}
 						}, time.getHour(), time.getMinute(), true).show();

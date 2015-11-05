@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout1"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/bg_offwork"
     android:orientation="vertical" >
 
@@ -12,6 +12,7 @@
         android:layout_height="fill_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:visibility="gone"
         android:paddingTop="150dp" >
 
         <TextView
@@ -63,4 +64,4 @@
         </Button>
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>
