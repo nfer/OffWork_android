@@ -52,7 +52,7 @@ public class OffWorkActivity extends BaseActivity
 	private MyTime offWorkTime;
 	private Timer timer = null;
 	private TimerTask task = null;
-	private Handler handler = null;
+	private static Handler handler = null;
 
 	private PendingIntent alarmPendingIntent = null;
 
@@ -77,6 +77,8 @@ public class OffWorkActivity extends BaseActivity
 		getOverflowMenu();
 
 		setTitle(getString(R.string.app_name));
+
+		handler = new MyHandler(this);
 	}
 
 	public void onResume() {
@@ -91,22 +93,7 @@ public class OffWorkActivity extends BaseActivity
 		}
 
 		timer = new Timer();
-		handler = new MyHandler(this) {
-			@Override
-			public void handleMessage(Message msg) {
-				calcWorkLeftTime();
-				super.handleMessage(msg);
-			}
-		};
-
-		task = new TimerTask() {
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				handler.sendMessage(message);
-			}
-		};
+		task = new MyTimerTask();
 
 		today = Utils.getTodayString();
 		String timeStr = preferences.getString(today, null);
@@ -273,9 +260,19 @@ public class OffWorkActivity extends BaseActivity
 
 		@Override
 		public void handleMessage(Message msg) {
+			mActivity.get().calcWorkLeftTime();
 			super.handleMessage(msg);
 		}
 	};
+
+	class MyTimerTask extends TimerTask {
+		@Override
+		public void run() {
+			Message message = new Message();
+			message.what = 1;
+			handler.sendMessage(message);
+		}
+	}
 
 	public void startAlarm(int seconds) {
 		// Construct an intent that will execute the AlarmReceiver
@@ -328,8 +325,9 @@ public class OffWorkActivity extends BaseActivity
 								new TimePickerDialog.OnTimeSetListener() {
 							public void onTimeSet(TimePicker view, int hour,
 									int minute) {
-								String newTimeStr = String
-										.format(Locale.SIMPLIFIED_CHINESE ,"%02d:%02d", hour, minute);
+								String newTimeStr = String.format(
+										Locale.SIMPLIFIED_CHINESE, "%02d:%02d",
+										hour, minute);
 								saveSignInTime(newTimeStr);
 							}
 						}, time.getHour(), time.getMinute(), true).show();
