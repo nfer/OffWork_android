@@ -10,8 +10,20 @@
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="150dp"
-        android:text="@string/author"
+        android:paddingTop="50dp"
+        android:text="@string/aboutDetail"
+        android:textColor="@drawable/black"
+        android:textSize="20sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/aboutDetail2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:text="@string/aboutDetail2"
         android:textColor="@drawable/black"
         android:textSize="20sp" >
     </TextView>
@@ -22,6 +34,17 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="20dp"
+        android:text="@string/author"
+        android:textColor="@drawable/black"
+        android:textSize="20sp" >
+    </TextView>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
         android:text="@string/QQ"
         android:textColor="@drawable/black"
         android:textSize="20sp" >
@@ -33,7 +56,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="20dp"
+        android:paddingTop="10dp"
         android:text="@string/version"
         android:textColor="@drawable/black"
         android:textSize="20sp" >

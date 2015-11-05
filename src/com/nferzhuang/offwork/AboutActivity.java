@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -23,6 +24,9 @@ public class AboutActivity extends BaseActivity {
 				finish();
 			}
 		}, true);
+
+		TextView aboutDetail2 = (TextView) findViewById(R.id.aboutDetail2);
+		aboutDetail2.setMovementMethod(LinkMovementMethod.getInstance());
 
 		String version = getAppVersionName(getApplicationContext());
 		Log.d(TAG, "version:" + version);
