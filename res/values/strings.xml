@@ -19,6 +19,7 @@
     <string name="goHomeTitle">下班喽</string>
     <string name="seqrator">~</string>
     <string name="modify">修改打卡时间</string>
+    <string name="manual">手动设置打卡时间</string>
     <string name="settings">设置</string>
     <string name="about">关于</string>
     <string name="aboutDetail">该软件是免费自由软件，秉承以下观点：一、没有广告；二、不偷流量；三、不搞小动作；专心只做自己的事情。</string>

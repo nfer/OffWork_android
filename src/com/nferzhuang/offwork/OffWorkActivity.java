@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,6 +71,17 @@ public class OffWorkActivity extends BaseActivity implements
 
 		signIn = (Button) findViewById(R.id.signIn);
 		signIn.setOnClickListener(this);
+
+		TextView signInManual = (TextView) findViewById(R.id.signInManual);
+		signInManual.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+		signInManual.getPaint().setAntiAlias(true);
+		signInManual.setClickable(true);
+		signInManual.setOnClickListener(this);
+		signInManual.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				selectSignTime(Utils.getNowTime().toString());
+			}
+		});
 
 		offWorkLeftLayout = (LinearLayout) findViewById(R.id.offWorkLeftLayout);
 		signInLayout = (LinearLayout) findViewById(R.id.signInLayout);

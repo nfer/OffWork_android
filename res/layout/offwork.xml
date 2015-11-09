@@ -51,7 +51,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_horizontal"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingTop="150dp" >
 
         <Button
@@ -62,6 +62,17 @@
             android:textColor="@drawable/black"
             android:textSize="18sp" >
         </Button>
+
+        <TextView
+            android:id="@+id/signInManual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:text="@string/manual"
+            android:textColor="@drawable/alphawhite"
+            android:textSize="16sp" >
+
+        </TextView>
     </LinearLayout>
 
 </LinearLayout>
