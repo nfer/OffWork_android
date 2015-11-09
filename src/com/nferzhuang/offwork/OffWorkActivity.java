@@ -35,8 +35,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-public class OffWorkActivity extends BaseActivity
-		implements View.OnClickListener {
+public class OffWorkActivity extends BaseActivity implements
+		View.OnClickListener {
 	private static final String TAG = "OffWorkActivity";
 
 	private Button signIn;
@@ -92,9 +92,6 @@ public class OffWorkActivity extends BaseActivity
 			return;
 		}
 
-		timer = new Timer();
-		task = new MyTimerTask();
-
 		today = Utils.getTodayString();
 		String timeStr = preferences.getString(today, null);
 		if (timeStr == null) {
@@ -106,16 +103,6 @@ public class OffWorkActivity extends BaseActivity
 
 	public void onPause() {
 		super.onPause();
-
-		if (timer != null) {
-			timer.cancel();
-			timer = null;
-		}
-
-		if (task != null) {
-			task.cancel();
-			task = null;
-		}
 	}
 
 	@Override
@@ -128,6 +115,14 @@ public class OffWorkActivity extends BaseActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.action_modify:
+			String timeStr;
+			if (signInTime != null)
+				timeStr = signInTime.toString();
+			else
+				timeStr = Utils.getNowTime().toString();
+			selectSignTime(timeStr);
+			return true;
 		case R.id.action_settings:
 			startSettings();
 			return true;
@@ -177,6 +172,18 @@ public class OffWorkActivity extends BaseActivity
 		Log.d(TAG, "offWorkTime:" + offWorkTime);
 		offWorkTimeTips.setText(getString(R.string.offWorkTime) + offWorkTime);
 
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+		timer = new Timer();
+
+		if (task != null) {
+			task.cancel();
+			task = null;
+		}
+		task = new MyTimerTask();
+
 		// use timer to update work left time
 		timer.schedule(task, 0, 1000);
 	}
@@ -199,8 +206,8 @@ public class OffWorkActivity extends BaseActivity
 
 		int workLeftSecond = 0;
 		if (now.compare(noonRestStartTime) < 0) {
-			Log.v(TAG,
-					"now is less than noonRestStartTime:" + noonRestStartTime);
+			Log.v(TAG, "now is less than noonRestStartTime:"
+					+ noonRestStartTime);
 			int noonRestDuration = workTime.getNoonRestDuration();
 			Log.v(TAG, "noonRestDuration:" + noonRestDuration);
 			workLeftSecond = offWorkTime.compare(now) - noonRestDuration;
@@ -241,8 +248,7 @@ public class OffWorkActivity extends BaseActivity
 	}
 
 	public void startSettings() {
-		Intent intent = new Intent(OffWorkActivity.this,
-				SettingsActivity.class);
+		Intent intent = new Intent(OffWorkActivity.this, SettingsActivity.class);
 		startActivity(intent);
 	}
 
@@ -319,18 +325,7 @@ public class OffWorkActivity extends BaseActivity
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						MyTime time = new MyTime(timeStr);
-
-						new MyTimePickerDialog(OffWorkActivity.this,
-								new TimePickerDialog.OnTimeSetListener() {
-							public void onTimeSet(TimePicker view, int hour,
-									int minute) {
-								String newTimeStr = String.format(
-										Locale.SIMPLIFIED_CHINESE, "%02d:%02d",
-										hour, minute);
-								saveSignInTime(newTimeStr);
-							}
-						}, time.getHour(), time.getMinute(), true).show();
+						selectSignTime(timeStr);
 					}
 				});
 		dialog.setNegativeButton(getString(R.string.Cancel),
@@ -349,5 +344,19 @@ public class OffWorkActivity extends BaseActivity
 		editor.commit();
 
 		initOffWorkLeft(timeStr);
+	}
+
+	private void selectSignTime(String timeStr) {
+		MyTime time = new MyTime(timeStr);
+
+		new MyTimePickerDialog(OffWorkActivity.this,
+				new TimePickerDialog.OnTimeSetListener() {
+					public void onTimeSet(TimePicker view, int hour, int minute) {
+						String newTimeStr = String.format(
+								Locale.SIMPLIFIED_CHINESE, "%02d:%02d", hour,
+								minute);
+						saveSignInTime(newTimeStr);
+					}
+				}, time.getHour(), time.getMinute(), true).show();
 	}
 }
