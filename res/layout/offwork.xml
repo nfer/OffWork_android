@@ -33,17 +33,32 @@
             android:textSize="16sp" >
         </TextView>
 
-        <TextView
-            android:id="@+id/offWorkLeftTips"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
             android:paddingBottom="20dp"
-            android:paddingTop="20dp"
-            android:text="@string/notSignIn"
-            android:textColor="@drawable/white"
-            android:textSize="16sp" >
+            android:paddingTop="20dp" >
 
-        </TextView>
+            <TextView
+                android:id="@+id/offWorkLeftTips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notSignIn"
+                android:textColor="@drawable/white"
+                android:textSize="16sp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/offWorkLeftValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/onWorkTimeStart"
+                android:textColor="@drawable/white"
+                android:textSize="36sp" >
+            </TextView>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -71,7 +86,6 @@
             android:text="@string/manual"
             android:textColor="@drawable/alphawhite"
             android:textSize="16sp" >
-
         </TextView>
     </LinearLayout>
 

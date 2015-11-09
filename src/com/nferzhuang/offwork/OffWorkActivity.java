@@ -44,6 +44,7 @@ public class OffWorkActivity extends BaseActivity implements
 	private TextView signInTimeTips;
 	private TextView offWorkTimeTips;
 	private TextView offWorkLeftTips;
+	private TextView offWorkLeftValue;
 	private SharedPreferences preferences;
 	private String today;
 	private LinearLayout offWorkLeftLayout;
@@ -68,6 +69,7 @@ public class OffWorkActivity extends BaseActivity implements
 		signInTimeTips = (TextView) findViewById(R.id.signInTimeTips);
 		offWorkTimeTips = (TextView) findViewById(R.id.offWorkTimeTips);
 		offWorkLeftTips = (TextView) findViewById(R.id.offWorkLeftTips);
+		offWorkLeftValue = (TextView) findViewById(R.id.offWorkLeftValue);
 
 		signIn = (Button) findViewById(R.id.signIn);
 		signIn.setOnClickListener(this);
@@ -205,6 +207,7 @@ public class OffWorkActivity extends BaseActivity implements
 		Log.d(TAG, "now:" + now + ", offWorkTime:" + offWorkTime);
 		if (now.compare(offWorkTime) >= 0) {
 			offWorkLeftTips.setText(R.string.goHome);
+			offWorkLeftValue.setVisibility(View.GONE);
 			timer.cancel();
 			return;
 		}
@@ -233,9 +236,8 @@ public class OffWorkActivity extends BaseActivity implements
 
 		MyTime workLeftTime = new MyTime(workLeftSecond);
 		Log.d(TAG, "workLeftTime:" + workLeftTime);
-		String tips = getString(R.string.offWorkLeft);
-		tips += workLeftTime;
-		offWorkLeftTips.setText(tips);
+		offWorkLeftTips.setText(R.string.offWorkLeft);
+		offWorkLeftValue.setText(workLeftTime.toString());
 	}
 
 	@Override
